@@ -2,14 +2,19 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
+using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Formatters;
+using Microsoft.Extensions.Internal;
 using Microsoft.Extensions.Logging;
+
 
 namespace Microsoft.AspNetCore.Mvc.Infrastructure
 {
@@ -18,6 +23,14 @@ namespace Microsoft.AspNetCore.Mvc.Infrastructure
     /// </summary>
     public class ObjectResultExecutor : IActionResultExecutor<ObjectResult>
     {
+        private delegate Task<(Type, IList)> ConvertAsyncEnumerable(object value);
+        private static readonly Task<(Type, IList)> NullResult = Task.FromResult<(Type, IList)>(default);
+
+        private static readonly MethodInfo Converter = typeof(ObjectResultExecutor).GetMethod(nameof(ReadAsyncEnumerable), BindingFlags.NonPublic | BindingFlags.Static);
+
+        private readonly ConcurrentDictionary<Type, ConvertAsyncEnumerable> _asyncEnumerableConverters =
+            new ConcurrentDictionary<Type, ConvertAsyncEnumerable>();
+
         /// <summary>
         /// Creates a new <see cref="ObjectResultExecutor"/>.
         /// </summary>
@@ -87,16 +100,49 @@ namespace Microsoft.AspNetCore.Mvc.Infrastructure
             InferContentTypes(context, result);
 
             var objectType = result.DeclaredType;
+
             if (objectType == null || objectType == typeof(object))
             {
                 objectType = result.Value?.GetType();
             }
 
+            var value = result.Value;
+
+            if (value != null)
+            {
+                var unwrapAsyncEnumerable = UnwrapAsyncEnumerable(result.Value);
+                if (ReferenceEquals(unwrapAsyncEnumerable, NullResult))
+                {
+                    // This isn't an IAsyncEnumerable. Nothing to do here.
+                }
+                else if (unwrapAsyncEnumerable.IsCompletedSuccessfully)
+                {
+                    var asyncEnumerableResult = unwrapAsyncEnumerable.Result;
+                    objectType = asyncEnumerableResult.objectType;
+                    value = asyncEnumerableResult.enumeratedList;
+                }
+                else
+                {
+                    return ExecuteAsyncAwaited(context, result, unwrapAsyncEnumerable);
+                }
+            }
+
+            return ExecuteAsyncCore(context, result, objectType, value);
+        }
+
+        private async Task ExecuteAsyncAwaited(ActionContext context, ObjectResult result, Task<(Type, IList)> task)
+        {
+            var (objectType, value) = await task;
+            await ExecuteAsyncCore(context, result, objectType, value);
+        }
+
+        private Task ExecuteAsyncCore(ActionContext context, ObjectResult result, Type objectType, object value)
+        {
             var formatterContext = new OutputFormatterWriteContext(
                 context.HttpContext,
                 WriterFactory,
                 objectType,
-                result.Value);
+                value);
 
             var selectedFormatter = FormatterSelector.SelectFormatter(
                 formatterContext,
@@ -137,6 +183,47 @@ namespace Microsoft.AspNetCore.Mvc.Infrastructure
                 result.ContentTypes.Add("application/problem+json");
                 result.ContentTypes.Add("application/problem+xml");
             }
+        }
+
+        private Task<(Type objectType, IList enumeratedList)> UnwrapAsyncEnumerable(object value)
+        {
+            var type = value.GetType();
+            if (!_asyncEnumerableConverters.TryGetValue(type, out var result))
+            {
+                var enumerableType = ClosedGenericMatcher.ExtractGenericInterface(type, typeof(IAsyncEnumerable<>));
+                result = null;
+                if (enumerableType != null)
+                {
+                    var enumeratedObjectType = enumerableType.GetGenericArguments()[0];
+
+                    var converter = (ConvertAsyncEnumerable)Converter
+                        .MakeGenericMethod(enumeratedObjectType)
+                        .CreateDelegate(typeof(ConvertAsyncEnumerable));
+
+                    _asyncEnumerableConverters[type] = converter;
+                    result = converter;
+                }
+            }
+
+            if (result is null)
+            {
+                return NullResult;
+            }
+
+            return result(value);
+        }
+
+        private static async Task<(Type, IList)> ReadAsyncEnumerable<T>(object asyncEnumerable)
+        {
+            var converted = (IAsyncEnumerable<T>)asyncEnumerable;
+            var result = new List<T>();
+
+            await foreach (var item in converted)
+            {
+                result.Add(item);
+            }
+
+            return (result.GetType(), result);
         }
     }
 }

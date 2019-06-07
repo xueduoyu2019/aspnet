@@ -18,6 +18,7 @@ Microsoft.AspNetCore.Mvc.RouteAttribute</Description>
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="$(SharedSourceRoot)AsyncEnumerable\**\*.cs" />
     <Compile Include="$(SharedSourceRoot)ChunkingCookieManager\**\*.cs" />
     <Compile Include="$(SharedSourceRoot)CopyOnWriteDictionary\**\*.cs" />
     <Compile Include="$(SharedSourceRoot)ObjectMethodExecutor\**\*.cs" />

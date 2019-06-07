@@ -26,6 +26,9 @@ namespace MvcSandbox
             {
                 options.ConstraintMap["slugify"] = typeof(SlugifyParameterTransformer);
             });
+
+            services.AddEntityFrameworkInMemoryDatabase();
+
             services.AddServerSideBlazor();
             services.AddMvc()
                 .AddRazorRuntimeCompilation()
