@@ -293,6 +293,10 @@
       <Uri>https://github.com/aspnet/Extensions</Uri>
       <Sha>6e92fcad99b6a6e882ac8dc5ad817b558f603597</Sha>
     </Dependency>
+    <Dependency Name="Microsoft.Bcl.AsyncInterfaces" Version="1.0.0-preview6.19279.8" CoherentParentDependency="Microsoft.NETCore.App">
+      <Uri>https://github.com/dotnet/corefx</Uri>
+      <Sha>e23119d577e644d2c2a25419c88c1181681358e0</Sha>
+    </Dependency>
     <Dependency Name="Microsoft.CSharp" Version="4.6.0-preview6.19279.8" CoherentParentDependency="Microsoft.NETCore.App">
       <Uri>https://github.com/dotnet/corefx</Uri>
       <Sha>e23119d577e644d2c2a25419c88c1181681358e0</Sha>
