@@ -389,13 +389,13 @@
       <Uri>https://github.com/dotnet/core-setup</Uri>
       <Sha>094b6111d3d8c90d1111db4d73fd9faa755d9413</Sha>
     </Dependency>
-    <Dependency Name="NETStandard.Library.Ref" Version="2.1.0-preview7-27812-08" CoherentParentDependency="Microsoft.Extensions.Logging">
+    <Dependency Name="runtime.win-x64.Microsoft.NETCore.DotNetAppHost" Version="3.0.0-preview7-27812-08">
       <Uri>https://github.com/dotnet/core-setup</Uri>
       <Sha>094b6111d3d8c90d1111db4d73fd9faa755d9413</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.NETCore.DotNetAppHost" Version="3.0.0-preview7-27809-08">
+    <Dependency Name="NETStandard.Library.Ref" Version="2.1.0-preview7-27812-08" CoherentParentDependency="Microsoft.Extensions.Logging">
       <Uri>https://github.com/dotnet/core-setup</Uri>
-      <Sha>63abc77da6d99470caa5bfa0465afe244105e595</Sha>
+      <Sha>094b6111d3d8c90d1111db4d73fd9faa755d9413</Sha>
     </Dependency>
   </ProductDependencies>
   <ToolsetDependencies>
