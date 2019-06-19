@@ -3,6 +3,7 @@
 
 using System;
 using System.IO;
+using System.Reflection;
 using System.Runtime.InteropServices;
 
 namespace Microsoft.AspNetCore.Server.IntegrationTesting
@@ -29,7 +30,7 @@ namespace Microsoft.AspNetCore.Server.IntegrationTesting
             else if (!string.IsNullOrEmpty(dotnetRoot))
             {
                 // DOTNET_ROOT has x64 appended to the path, which we append again in GetDotNetInstallDir
-                result = dotnetRoot.Substring(0, dotnetRoot.Length - 3);
+                result = dotnetRoot;
             }
             else if (!string.IsNullOrEmpty(userProfile))
             {
@@ -46,7 +47,7 @@ namespace Microsoft.AspNetCore.Server.IntegrationTesting
         public static string GetDotNetInstallDir(RuntimeArchitecture arch)
         {
             var dotnetDir = DotNetHome;
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) && arch == RuntimeArchitecture.x86)
             {
                 dotnetDir = Path.Combine(dotnetDir, arch.ToString());
             }
