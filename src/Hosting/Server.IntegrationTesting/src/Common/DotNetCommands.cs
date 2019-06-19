@@ -29,7 +29,6 @@ namespace Microsoft.AspNetCore.Server.IntegrationTesting
             }
             else if (!string.IsNullOrEmpty(dotnetRoot))
             {
-                // DOTNET_ROOT has x64 appended to the path, which we append again in GetDotNetInstallDir
                 result = dotnetRoot;
             }
             else if (!string.IsNullOrEmpty(userProfile))
@@ -49,6 +48,7 @@ namespace Microsoft.AspNetCore.Server.IntegrationTesting
             var dotnetDir = DotNetHome;
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) && arch == RuntimeArchitecture.x86)
             {
+                // x86 dotnet is now in a subfolder under dotnet
                 dotnetDir = Path.Combine(dotnetDir, arch.ToString());
             }
 
