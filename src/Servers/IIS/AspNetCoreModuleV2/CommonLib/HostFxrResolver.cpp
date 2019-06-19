@@ -16,7 +16,7 @@
 
 namespace fs = std::filesystem;
 
-typedef INT(*get_hostfxr_path) (PWSTR buffer, size_t* bufferSize, PCWSTR assemblyPath);
+typedef INT(__stdcall *get_hostfxr_path) (PWSTR buffer, size_t* bufferSize, PCWSTR assemblyPath);
 
 void
 HostFxrResolver::GetHostFxrParameters(
@@ -51,13 +51,8 @@ HostFxrResolver::GetHostFxrParameters(
         throw InvalidOperationException(format(L"Process path '%s' doesn't have '.exe' extension.", expandedProcessPath.c_str()));
     }
 
-    // TODO make sure we figure out a way to load this dll sxs
     std::wstring modulePath = GlobalVersionUtility::GetModuleName(aspNetCoreModule);
 
-    // If we are in the shim, load hostfxr.
-    // Otherwise, throw.
-    // I think we need to assume that hostfxr is loaded by the shim.
-    // but we may need a backup, which really sucks.
     modulePath = GlobalVersionUtility::RemoveFileNameFromFolderPath(modulePath);
 
     auto moduleHandle = LoadLibrary(modulePath.append(L"\\nethost.dll").c_str());
