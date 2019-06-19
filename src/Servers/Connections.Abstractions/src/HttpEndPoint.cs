@@ -1,14 +1,18 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+using System;
 using System.Net;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Microsoft.AspNetCore.Connections
 {
-    public interface IConnectionListenerFactory
+    public class HttpEndPoint : EndPoint
     {
-        ValueTask<IConnectionListener> BindAsync(EndPoint endpoint, CancellationToken cancellationToken = default);
+        public HttpEndPoint(Uri url)
+        {
+            Url = url ?? throw new ArgumentNullException(nameof(url));
+        }
+
+        public Uri Url { get;  }
     }
 }
