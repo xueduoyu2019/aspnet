@@ -87,6 +87,7 @@ HostFxrResolver::GetHostFxrParameters(
 
                 hostfxrPath.resize(size);
                 hostFxrDllPath = hostfxrPath;
+                LOG_INFOF(L"Hostfxr Path: %s", hostFxrDllPath.c_str());
                 dotnetExePath = GetAbsolutePathToDotnetFromHostfxr(hostFxrDllPath);
 
                 arguments.insert(arguments.begin(), dotnetExePath);
@@ -165,6 +166,7 @@ HostFxrResolver::GetHostFxrParameters(
                         get_host_fxr_path(hostfxrPath.data(), &size, applicationDllPath.c_str());
                         hostfxrPath.resize(size);
                         hostFxrDllPath = hostfxrPath;
+                        LOG_INFOF(L"Hostfxr Path: %s", hostFxrDllPath.c_str());
 
                         dotnetExePath = GetAbsolutePathToDotnetFromHostfxr(hostFxrDllPath);
                     }
