@@ -24,12 +24,9 @@ namespace Microsoft.AspNetCore.Server.IIS
 
         public static extern bool CloseHandle(IntPtr handle);
 
-        [DllImport("kernel32.dll")]
-        private static extern IntPtr GetModuleHandle(string lpModuleName);
-
         public static bool IsAspNetCoreModuleLoaded()
         {
-            return GetModuleHandle(AspNetCoreModuleDll) != IntPtr.Zero;
+            return NativeLibrary.TryLoad(AspNetCoreModuleDll, out _);
         }
 
         public enum REQUEST_NOTIFICATION_STATUS
