@@ -36,10 +36,7 @@ namespace Microsoft.AspNetCore.Server.Kestrel.FunctionalTests
         public static TheoryData<ListenOptions> ConnectionAdapterData => new TheoryData<ListenOptions>
         {
             new ListenOptions(new IPEndPoint(IPAddress.Loopback, 0)),
-            new ListenOptions(new IPEndPoint(IPAddress.Loopback, 0))
-            {
-                ConnectionAdapters = { new PassThroughConnectionAdapter() }
-            }
+            new ListenOptions(new IPEndPoint(IPAddress.Loopback, 0)).UsePassThrough()
         };
 
         [Fact]
@@ -160,7 +157,7 @@ namespace Microsoft.AspNetCore.Server.Kestrel.FunctionalTests
                 {
                     appCompleted.TrySetException(ex);
                 }
-            }, new TestServiceContext(LoggerFactory), listenOptions))
+            }, new TestServiceContext(LoggerFactory) { ExpectedConnectionMiddlewareCount = listenOptions._middleware.Count }, listenOptions))
             {
                 using (var connection = server.CreateConnection())
                 {
@@ -222,7 +219,7 @@ namespace Microsoft.AspNetCore.Server.Kestrel.FunctionalTests
                 }
 
                 writeTcs.SetException(new Exception("This shouldn't be reached."));
-            }, new TestServiceContext(LoggerFactory), listenOptions))
+            }, new TestServiceContext(LoggerFactory) { ExpectedConnectionMiddlewareCount = listenOptions._middleware.Count }, listenOptions))
             {
                 using (var connection = server.CreateConnection())
                 {
@@ -276,6 +273,7 @@ namespace Microsoft.AspNetCore.Server.Kestrel.FunctionalTests
 
             var testContext = new TestServiceContext(LoggerFactory, mockKestrelTrace.Object)
             {
+                ExpectedConnectionMiddlewareCount = listenOptions._middleware.Count,
                 ServerOptions =
                 {
                     Limits =
@@ -370,7 +368,7 @@ namespace Microsoft.AspNetCore.Server.Kestrel.FunctionalTests
 
                 await requestAborted.Task.DefaultTimeout();
                 appCompletedTcs.SetResult(null);
-            }, new TestServiceContext(LoggerFactory), listenOptions))
+            }, new TestServiceContext(LoggerFactory) { ExpectedConnectionMiddlewareCount = listenOptions._middleware.Count }, listenOptions))
             {
                 using (var connection = server.CreateConnection())
                 {
@@ -424,7 +422,8 @@ namespace Microsoft.AspNetCore.Server.Kestrel.FunctionalTests
 
             // There's not guarantee that the app even gets invoked in this test. The connection reset can be observed
             // as early as accept.
-            using (var server = new TestServer(context => Task.CompletedTask, new TestServiceContext(LoggerFactory), listenOptions))
+            var testServiceContext = new TestServiceContext(LoggerFactory) { ExpectedConnectionMiddlewareCount = listenOptions._middleware.Count };
+            using (var server = new TestServer(context => Task.CompletedTask, testServiceContext, listenOptions))
             {
                 for (var i = 0; i < numConnections; i++)
                 {
@@ -583,18 +582,16 @@ namespace Microsoft.AspNetCore.Server.Kestrel.FunctionalTests
                     {
                         MinResponseDataRate = new MinDataRate(bytesPerSecond: 1024 * 1024, gracePeriod: TimeSpan.FromSeconds(2))
                     }
-                }
+                },
+                ExpectedConnectionMiddlewareCount = 1
             };
 
             testContext.InitializeHeartbeat();
 
-            var listenOptions = new ListenOptions(new IPEndPoint(IPAddress.Loopback, 0))
+            void ConfigureListenOptions(ListenOptions listenOptions)
             {
-                ConnectionAdapters =
-                {
-                    new HttpsConnectionAdapter(new HttpsConnectionAdapterOptions { ServerCertificate = certificate })
-                }
-            };
+                listenOptions.UseHttps(new HttpsConnectionAdapterOptions { ServerCertificate = certificate });
+            }
 
             using (var server = new TestServer(async context =>
             {
@@ -621,7 +618,7 @@ namespace Microsoft.AspNetCore.Server.Kestrel.FunctionalTests
                 {
                     await aborted.Task.DefaultTimeout();
                 }
-            }, testContext, listenOptions))
+            }, testContext, ConfigureListenOptions))
             {
                 using (var connection = server.CreateConnection())
                 {
