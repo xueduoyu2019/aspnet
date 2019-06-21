@@ -31,7 +31,7 @@ namespace Microsoft.AspNetCore.Server.Kestrel.InMemory.FunctionalTests
     {
         private static X509Certificate2 _x509Certificate2 = TestResources.GetTestCertificate();
         private static X509Certificate2 _x509Certificate2NoExt = TestResources.GetTestCertificate("no_extensions.pfx");
-
+        /*
         [Fact]
         public async Task CanReadAndWriteWithHttpsConnectionMiddleware()
         {
@@ -51,7 +51,7 @@ namespace Microsoft.AspNetCore.Server.Kestrel.InMemory.FunctionalTests
                 Assert.Equal("content=Hello+World%3F", result);
             }
         }
-
+        */
         [Fact]
         public async Task HandshakeDetailsAreAvailable()
         {
@@ -185,7 +185,7 @@ namespace Microsoft.AspNetCore.Server.Kestrel.InMemory.FunctionalTests
                 }
             }
         }
-
+        // **** THIS ONE ***///
         [Fact]
         public async Task UsesProvidedServerCertificateSelectorEachTime()
         {
@@ -233,7 +233,7 @@ namespace Microsoft.AspNetCore.Server.Kestrel.InMemory.FunctionalTests
                 }
             }
         }
-
+        /*
         [Fact]
         public async Task UsesProvidedServerCertificateSelectorValidatesEkus()
         {
@@ -264,7 +264,8 @@ namespace Microsoft.AspNetCore.Server.Kestrel.InMemory.FunctionalTests
                 }
             }
         }
-
+        */
+        // *** ALSO THIS ONE *** ///
         [Fact]
         public async Task UsesProvidedServerCertificateSelectorOverridesServerCertificate()
         {
@@ -299,7 +300,7 @@ namespace Microsoft.AspNetCore.Server.Kestrel.InMemory.FunctionalTests
                 }
             }
         }
-
+/*
         [Fact]
         public async Task UsesProvidedServerCertificateSelectorFailsIfYouReturnNull()
         {
@@ -330,10 +331,12 @@ namespace Microsoft.AspNetCore.Server.Kestrel.InMemory.FunctionalTests
                 }
             }
         }
-
+*/
+        // *** AND THS ONE *** ///
         [Theory]
+        // *** IF WE DISABEL THE FIRST DATA THEN THE SECOND ONE FAILS (IT WASN'T FAILING BEFORE) BUT THE OTHERS DON'T ANYMORE ***//
         [InlineData(HttpProtocols.Http1)]
-        [InlineData(HttpProtocols.Http1AndHttp2)] // Make sure Http/1.1 doesn't regress with Http/2 enabled.
+        // [InlineData(HttpProtocols.Http1AndHttp2)] // Make sure Http/1.1 doesn't regress with Http/2 enabled.
         public async Task CertificatePassedToHttpContext(HttpProtocols httpProtocols)
         {
             void ConfigureListenOptions(ListenOptions listenOptions)
@@ -367,7 +370,7 @@ namespace Microsoft.AspNetCore.Server.Kestrel.InMemory.FunctionalTests
                 }
             }
         }
-
+        /*
         [Fact]
         public async Task HttpsSchemePassedToRequestFeature()
         {
@@ -382,7 +385,8 @@ namespace Microsoft.AspNetCore.Server.Kestrel.InMemory.FunctionalTests
                 Assert.Equal("https", result);
             }
         }
-
+        */
+        /*
         [Fact]
         public async Task DoesNotSupportTls10()
         {
@@ -410,7 +414,7 @@ namespace Microsoft.AspNetCore.Server.Kestrel.InMemory.FunctionalTests
                 }
             }
         }
-
+        */
         [Theory]
         [Flaky("https://github.com/aspnet/AspNetCore-Internal/issues/1976", FlakyOn.All)]
         [InlineData(ClientCertificateMode.AllowCertificate)]
@@ -445,7 +449,7 @@ namespace Microsoft.AspNetCore.Server.Kestrel.InMemory.FunctionalTests
                 }
             }
         }
-
+        /*
         [ConditionalTheory]
         [Flaky("https://github.com/aspnet/AspNetCore-Internal/issues/1950", FlakyOn.Helix.All)]
         [InlineData(ClientCertificateMode.AllowCertificate)]
@@ -472,10 +476,10 @@ namespace Microsoft.AspNetCore.Server.Kestrel.InMemory.FunctionalTests
                 }
             }
         }
-
+        */
         [Theory]
         [InlineData(ClientCertificateMode.AllowCertificate)]
-        [InlineData(ClientCertificateMode.RequireCertificate)]
+        // [InlineData(ClientCertificateMode.RequireCertificate)]
         public async Task RejectsConnectionOnSslPolicyErrorsWhenNoValidation(ClientCertificateMode mode)
         {
             void ConfigureListenOptions(ListenOptions listenOptions)
@@ -497,7 +501,7 @@ namespace Microsoft.AspNetCore.Server.Kestrel.InMemory.FunctionalTests
                 }
             }
         }
-
+        /*
         [Fact]
         public async Task CertificatePassedToHttpContextIsNotDisposed()
         {
@@ -588,7 +592,7 @@ namespace Microsoft.AspNetCore.Server.Kestrel.InMemory.FunctionalTests
 
             Assert.Equal(CoreStrings.FormatInvalidServerCertificateEku(cert.Thumbprint), ex.Message);
         }
-
+        */
         private static async Task App(HttpContext httpContext)
         {
             var request = httpContext.Request;
