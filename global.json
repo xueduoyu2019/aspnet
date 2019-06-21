@@ -1,9 +1,9 @@
 {
   "sdk": {
-    "version": "3.0.100-preview5-011568"
+    "version": "3.0.100-preview7-012517"
   },
   "tools": {
-    "dotnet": "3.0.100-preview5-011568",
+    "dotnet": "3.0.100-preview7-012517",
     "jdk": "11.0.3"
   },
   "msbuild-sdks": {
