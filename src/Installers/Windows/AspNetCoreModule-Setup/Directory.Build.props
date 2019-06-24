@@ -72,7 +72,7 @@
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
       <SetPlatform>Platform=Win32</SetPlatform>
     </ProjectReference>
-    <PackageReference Include="runtime.win-x64.Microsoft.NETCore.DotNetAppHost" Version="$(MicrosoftNetCoreDotNetAppHostPackageVersion)" GeneratePathProperty="true" />
-    <PackageReference Include="runtime.win-x86.Microsoft.NETCore.DotNetAppHost" Version="$(MicrosoftNetCoreDotNetAppHostPackageVersion)" GeneratePathProperty="true" />
+    <PackageReference Include="runtime.win-x64.Microsoft.NETCore.DotNetAppHost" Version="$(runtimewinx64MicrosoftNETCoreDotNetAppHostPackageVersion)" GeneratePathProperty="true" />
+    <PackageReference Include="runtime.win-x86.Microsoft.NETCore.DotNetAppHost" Version="$(runtimewinx64MicrosoftNETCoreDotNetAppHostPackageVersion)" GeneratePathProperty="true" />
   </ItemGroup>
 </Project>

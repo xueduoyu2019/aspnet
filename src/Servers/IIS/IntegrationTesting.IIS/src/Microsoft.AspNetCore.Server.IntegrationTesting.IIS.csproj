@@ -42,7 +42,7 @@
     <NativeProjectReference Include="$(MSBuildThisFileDirectory)..\..\AspNetCoreModuleV2\OutOfProcessRequestHandler\OutOfProcessRequestHandler.vcxproj" Platform="Win32" />
   </ItemGroup>
 
-  <Target Name="AddRunNativeComponents" BeforeTargets="AssignTargetPaths" Condition="'$(BuildIisNativeProjects)' == 'true'">
+  <Target Name="AddRunNativeComponents" BeforeTargets="AssignTargetPaths" Condition="Exists('$(ShimNativeDllLocation)')">
     <ItemGroup>
       <None Include="%(ShimComponents.DllLocation)" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" Link="%(ShimComponents.Platform)\%(ShimComponents.PackageSubPath)\%(ShimComponents.NativeAsset).dll" />
       <None Include="$(Pkgruntime_win-x64_Microsoft_NETCore_DotNetAppHost)\runtimes\win-x64\native\nethost.dll" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" Link="x64/nethost.dll" />
@@ -50,7 +50,7 @@
     </ItemGroup>
   </Target>
 
-  <Target Name="AddPackNativeComponents" BeforeTargets="_GetPackageFiles" Condition="'$(BuildIisNativeProjects)' == 'true'">
+  <Target Name="AddPackNativeComponents" BeforeTargets="_GetPackageFiles" Condition="'Exists('$(ShimNativeDllLocation)')">
     <ItemGroup>
       <Content Include="%(ShimComponents.DllLocation)" PackageCopyToOutput="true" PackagePath="contentFiles/any/any/%(ShimComponents.Platform)/%(ShimComponents.PackageSubPath)" />
     </ItemGroup>

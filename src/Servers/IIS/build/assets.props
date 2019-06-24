@@ -7,6 +7,7 @@
         <NativePlatform Condition="'$(NativePlatform)' == ''">$(Platform)</NativePlatform>
         <NativeVCPlatform Condition="'$(NativePlatform)' == 'x86'">Win32</NativeVCPlatform>
         <NativeVCPlatform Condition="'$(NativeVCPlatform)' == ''">$(NativePlatform)</NativeVCPlatform>
+        <ShimNativeDllLocation>$(ArtifactsBinDir)AspNetCoreModuleShim\Win32\$(Configuration)\aspnetcorev2.dll</ShimNativeDllLocation>
     </PropertyGroup>
     <ItemGroup>
        <Components
