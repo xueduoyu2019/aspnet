@@ -50,7 +50,7 @@
     </ItemGroup>
   </Target>
 
-  <Target Name="AddPackNativeComponents" BeforeTargets="_GetPackageFiles" Condition="'Exists('$(ShimNativeDllLocation)')">
+  <Target Name="AddPackNativeComponents" BeforeTargets="_GetPackageFiles" Condition="Exists('$(ShimNativeDllLocation)')">
     <ItemGroup>
       <Content Include="%(ShimComponents.DllLocation)" PackageCopyToOutput="true" PackagePath="contentFiles/any/any/%(ShimComponents.Platform)/%(ShimComponents.PackageSubPath)" />
     </ItemGroup>

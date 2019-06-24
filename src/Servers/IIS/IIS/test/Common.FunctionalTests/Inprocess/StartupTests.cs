@@ -64,6 +64,26 @@ namespace Microsoft.AspNetCore.Server.IIS.FunctionalTests.InProcess
             Assert.Contains("HTTP Error 500.0 - ANCM In-Process Handler Load Failure", await response.Content.ReadAsStringAsync());
         }
 
+        [ConditionalTheory]
+        [InlineData("c:\\random files\\dotnet.exe", "something.dll")]
+        [InlineData(".\\dotnet.exe", "something.dll")]
+        public async Task InvalidProcessPath_ExpectServerErrorFromNetHost(string path, string arguments)
+        {
+            var deploymentParameters = Fixture.GetBaseDeploymentParameters();
+            deploymentParameters.WebConfigActionList.Add(WebConfigHelpers.AddOrModifyAspNetCoreSection("processPath", path));
+            deploymentParameters.WebConfigActionList.Add(WebConfigHelpers.AddOrModifyAspNetCoreSection("arguments", arguments));
+
+            var deploymentResult = await DeployAsync(deploymentParameters);
+
+            var response = await deploymentResult.HttpClient.GetAsync("HelloWorld");
+
+            Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
+
+            StopServer();
+
+            EventLogHelpers.VerifyEventLogEvent(deploymentResult, EventLogHelpers.CouldNotFindHandler(), Logger);
+        }
+
         [ConditionalFact]
         public async Task StartsWithDotnetLocationWithoutExe()
         {
@@ -132,9 +152,6 @@ namespace Microsoft.AspNetCore.Server.IIS.FunctionalTests.InProcess
                     var deploymentResult = await DeployAsync(deploymentParameters);
                     await deploymentResult.AssertStarts();
                     StopServer();
-                    // Verify that in this scenario dotnet.exe was found using InstallLocation lookup
-                    // I would've liked to make a copy of dotnet directory in this test and use it for verification
-                    // but dotnet roots are usually very large on dev machines so this test would take disproportionally long time and disk space
                 }
             }
         }
