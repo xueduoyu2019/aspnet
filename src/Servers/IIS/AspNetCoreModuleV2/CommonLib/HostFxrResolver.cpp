@@ -83,11 +83,11 @@ HostFxrResolver::GetHostFxrParameters(
                     true);
 
                 // argument[0] will contain the dll path.
-                get_host_fxr_path(hostfxrPath.data(), &size, arguments[0].c_str());
+                auto error = get_host_fxr_path(hostfxrPath.data(), &size, arguments[0].c_str());
 
                 hostfxrPath.resize(size);
                 hostFxrDllPath = hostfxrPath;
-                LOG_INFOF(L"Hostfxr Path: %s", hostFxrDllPath.c_str());
+                LOG_INFOF(L"Hostfxr Path: %s, error: %x", hostFxrDllPath.c_str(), error);
                 dotnetExePath = GetAbsolutePathToDotnetFromHostfxr(hostFxrDllPath);
 
                 arguments.insert(arguments.begin(), dotnetExePath);
@@ -157,16 +157,16 @@ HostFxrResolver::GetHostFxrParameters(
                     {
                         auto get_host_fxr_path = ModuleHelpers::GetKnownProcAddress<get_hostfxr_path>(moduleHandle, "get_hostfxr_path");
 
-                        LOG_INFOF(L"hostfxr.dll found app local at '%ls', treating application as portable with launcher", hostFxrDllPath.c_str());
+                        LOG_INFOF(L"hostfxr.dll not found app local at '%ls', treating application as portable with launcher", hostFxrDllPath.c_str());
 
                         std::wstring hostfxrPath;
                         size_t size = MAX_PATH * 2;
                         hostfxrPath.resize(size);
 
-                        get_host_fxr_path(hostfxrPath.data(), &size, applicationDllPath.c_str());
+                        auto error = get_host_fxr_path(hostfxrPath.data(), &size, applicationDllPath.c_str());
                         hostfxrPath.resize(size);
                         hostFxrDllPath = hostfxrPath;
-                        LOG_INFOF(L"Hostfxr Path: %s", hostFxrDllPath.c_str());
+                        LOG_INFOF(L"Hostfxr Path: %s, error: %x", hostFxrDllPath.c_str(), error);
 
                         dotnetExePath = GetAbsolutePathToDotnetFromHostfxr(hostFxrDllPath);
                     }
