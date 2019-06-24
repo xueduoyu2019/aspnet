@@ -288,6 +288,9 @@ if (-not $foundJdk -and $RunBuild -and ($All -or $BuildJava) -and -not $NoBuildJ
 # Initialize global variables need to be set before the import of Arcade is imported
 $restore = $RunRestore
 
+$env:DOTNET_ROOT = "$PSScriptRoot\.dotnet"
+${env:DOTNET_ROOT(x86)} = "$PSScriptRoot\.dotnet\x86"
+
 # Disable node reuse - Workaround perpetual issues in node reuse and custom task assemblies
 $nodeReuse = $false
 $env:MSBUILDDISABLENODEREUSE=1

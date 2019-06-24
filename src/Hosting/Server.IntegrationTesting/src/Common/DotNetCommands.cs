@@ -19,28 +19,18 @@ namespace Microsoft.AspNetCore.Server.IntegrationTesting
         {
             var dotnetHome = Environment.GetEnvironmentVariable("DOTNET_HOME");
             var dotnetRoot = Environment.GetEnvironmentVariable("DOTNET_ROOT");
-            var userProfile = Environment.GetEnvironmentVariable("USERPROFILE");
-            var home = Environment.GetEnvironmentVariable("HOME");
 
             var result = Path.Combine(Directory.GetCurrentDirectory(), _dotnetFolderName);
             if (!string.IsNullOrEmpty(dotnetHome))
             {
-                result = dotnetHome;
+                return dotnetHome;
             }
             else if (!string.IsNullOrEmpty(dotnetRoot))
             {
-                result = dotnetRoot;
-            }
-            else if (!string.IsNullOrEmpty(userProfile))
-            {
-                result = Path.Combine(userProfile, _dotnetFolderName);
-            }
-            else if (!string.IsNullOrEmpty(home))
-            {
-                result = home;
+                return dotnetRoot;
             }
 
-            return result;
+            throw new Exception("dotnet home or dotnet root not set");
         }
 
         public static string GetDotNetInstallDir(RuntimeArchitecture arch)
