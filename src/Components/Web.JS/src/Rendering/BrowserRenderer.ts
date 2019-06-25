@@ -411,7 +411,7 @@ function raiseEvent(event: Event, browserRendererId: number, eventHandlerId: num
   };
 
   return DotNet.invokeMethodAsync(
-    'Microsoft.AspNetCore.Components.Browser',
+    'Microsoft.AspNetCore.Components.Web',
     'DispatchEvent',
     eventDescriptor,
     JSON.stringify(eventArgs.data)

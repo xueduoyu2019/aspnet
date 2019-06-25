@@ -21,7 +21,7 @@ namespace Microsoft.AspNetCore.Builder
         public static Microsoft.AspNetCore.Components.Server.ComponentEndpointConventionBuilder MapBlazorHub<TComponent>(this Microsoft.AspNetCore.Routing.IEndpointRouteBuilder endpoints, string selector, string path, System.Action<Microsoft.AspNetCore.Http.Connections.HttpConnectionDispatcherOptions> configureOptions) where TComponent : Microsoft.AspNetCore.Components.IComponent { throw null; }
     }
 }
-namespace Microsoft.AspNetCore.Components.Browser.Rendering
+namespace Microsoft.AspNetCore.Components.Web.Rendering
 {
     public partial class RemoteRendererException : System.Exception
     {
