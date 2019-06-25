@@ -22,9 +22,9 @@ export function discoverPrerenderedCircuits(document: Document): CircuitDescript
   const discoveredCircuits = new Map<string, ComponentDescriptor[]>();
   for (let i = 0; i < commentPairs.length; i++) {
     const pair = commentPairs[i];
-    // We replace '--' on the server with '__' when we prerender due to the fact that this
+    // We replace '--' on the server with '..' when we prerender due to the fact that this
     // is not allowed in HTML comments and doesn't get encoded by default.
-    const circuitId = pair.start.circuitId.replace('__', '--');
+    const circuitId = pair.start.circuitId.replace('..', '--');
     let circuit = discoveredCircuits.get(circuitId);
     if (!circuit) {
       circuit = [];
