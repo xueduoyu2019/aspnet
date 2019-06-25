@@ -56,6 +56,9 @@ HostFxrResolver::GetHostFxrParameters(
     modulePath = GlobalVersionUtility::RemoveFileNameFromFolderPath(modulePath);
 
     auto moduleHandle = LoadLibrary(modulePath.append(L"\\nethost.dll").c_str());
+    LOG_INFOF(L"DOTNET_ROOT: %s", Environment::GetEnvironmentVariableValue(L"DOTNET_ROOT").value_or(L"").c_str());
+    LOG_INFOF(L"DOTNET_HOME: %s", Environment::GetEnvironmentVariableValue(L"DOTNET_HOME").value_or(L"").c_str());
+    LOG_INFOF(L"PATH: %s", Environment::GetEnvironmentVariableValue(L"PATH").value_or(L"").c_str());
 
     if (IsDotnetExecutable(expandedProcessPath))
     {
@@ -64,6 +67,25 @@ HostFxrResolver::GetHostFxrParameters(
         if (applicationArguments.empty())
         {
             throw InvalidOperationException(L"Application arguments are empty.");
+        }
+
+        if (expandedProcessPath.is_relative())
+        {
+            expandedProcessPath = applicationPhysicalPath / expandedProcessPath;
+        }
+
+        // Check if we already have an absolute path to dotnet
+        if (std::filesystem::is_regular_file(expandedProcessPath))
+        {
+            dotnetExePath = expandedProcessPath;
+            arguments.push_back(dotnetExePath);
+
+            AppendArguments(
+                expandedApplicationArguments,
+                applicationPhysicalPath,
+                arguments,
+                true);
+            return;
         }
 
         if (dotnetExePath.empty())
