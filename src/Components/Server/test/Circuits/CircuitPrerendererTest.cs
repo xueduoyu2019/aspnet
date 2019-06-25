@@ -126,7 +126,7 @@ namespace Microsoft.AspNetCore.Components.Server.Tests.Circuits
         }
 
         [Fact]
-        public async Task ReplacesDashesWithUnderscoresWhenTheyAppearInPairs()
+        public async Task ReplacesDashesWithDots_WhenTheyAppearInPairs()
         {
             // Arrange
             var circuitFactory = new TestCircuitFactory(() => "--1234--");
@@ -152,7 +152,7 @@ namespace Microsoft.AspNetCore.Components.Server.Tests.Circuits
             var result = await circuitPrerenderer.PrerenderComponentAsync(prerenderingContext);
 
             // Assert
-            Assert.Equal("__1234__", GetUnwrappedCircuitInfo(result).RootElement.GetProperty("circuitId").GetString());
+            Assert.Equal("..1234..", GetUnwrappedCircuitInfo(result).RootElement.GetProperty("circuitId").GetString());
         }
 
         class TestCircuitFactory : CircuitFactory

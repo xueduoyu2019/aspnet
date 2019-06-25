@@ -77,7 +77,7 @@ namespace Microsoft.AspNetCore.Components.Server.Circuits
             });
 
             var record = JsonSerializer.ToString(new PrerenderedComponentRecord(
-                    circuitHost.CircuitId.Replace("--", "__"), // We need to do this due to the fact that -- is not allowed within HTML comments and HTML doesn't encode '-'.
+                    circuitHost.CircuitId.Replace("--", ".."), // We need to do this due to the fact that -- is not allowed within HTML comments and HTML doesn't encode '-'.
                     circuitHost.Renderer.Id,
                     renderResult.ComponentId),
                 _jsonSerializationOptions);
